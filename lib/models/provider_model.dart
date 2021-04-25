@@ -86,6 +86,11 @@ class ProviderModel extends Model {
 
   void signOut() async {
     await _auth.signOut();
+
+    provData = Map();
+    firebaseUser = null;
+
+    notifyListeners();
   }
 
   bool isLoggedIn() {

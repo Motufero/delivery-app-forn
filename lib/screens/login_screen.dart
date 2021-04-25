@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_app_forn/tabs/home_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:delivery_app_forn/models/provider_model.dart';
@@ -56,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   validator: (text) {
                     if (text.isEmpty || text.length < 6) {
-                      return "SAenha inválida";
+                      return "Senha inválida";
                     }
                   },
                 ),
@@ -164,7 +166,15 @@ class _LoginScreenState extends State<LoginScreen> {
       duration: Duration(seconds: 2),
     ));
     Future.delayed(Duration(seconds: 2)).then((_) {
-      Navigator.of(context).pop();
+      final _pageController = PageController();
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomeTab(
+                  _pageController,
+                )),
+      );
     });
   }
 
