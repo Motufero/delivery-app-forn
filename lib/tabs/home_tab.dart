@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_app_forn/screens/config_screen.dart';
 import 'package:delivery_app_forn/screens/product_screen.dart';
+import 'package:delivery_app_forn/tiles/order_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:delivery_app_forn/widgets/background.dart';
@@ -92,7 +94,10 @@ class HomeTab extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(25)),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      //  Navigator.push(context,
+                      //      MaterialPageRoute(builder: (context) => OrderTile()));
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -115,7 +120,13 @@ class HomeTab extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(25)),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => configFornecedor()),
+                      );
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[

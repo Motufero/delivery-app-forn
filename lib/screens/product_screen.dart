@@ -1,65 +1,100 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:delivery_app_forn/data/product_data.dart';
-import 'package:delivery_app_forn/tiles/product_tile.dart';
+import 'package:delivery_app_forn/tabs/add_product_tab.dart';
+import 'package:delivery_app_forn/tabs/product_tab.dart';
 import 'package:flutter/material.dart';
-import 'package:delivery_app_forn/models/provider_model.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProductScreen extends StatelessWidget {
-  final _pageController = PageController();
-
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: _pageController,
-      children: [
-        ScopedModelDescendant<ProviderModel>(builder: (context, child, model) {
-          return Scaffold(
-            appBar: AppBar(
-              leading: Icon(
-                Icons.person_pin,
-                color: Colors.black,
-                size: 30,
-              ),
-              title: Text(model.provData["name"]),
-              backgroundColor: Colors.blueAccent,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.exit_to_app_rounded,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ),
-            body: FutureBuilder<QuerySnapshot>(
-                future: Firestore.instance //============não testado.
-                    .collection("providers")
-                    .document(model.provData["uid"])
-                    .collection("SaleProducts")
-                    .getDocuments(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    print("nao tem nada");
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else
-                    return ListView.builder(
-                      padding: EdgeInsets.all(4.0),
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) {
-                        return ProductTile(ProductData.fromDocument(
-                            snapshot.data.documents[index]));
-                      },
-                    );
-                }),
-          );
-        }),
-      ],
+    return SizedBox(
+      height: 200,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Seus produtos"),
+          centerTitle: true,
+        ),
+        body: FutureBuilder<QuerySnapshot>(
+          future: Firestore.instance
+              .collection("providers")
+              .document("1TD11Kw9nrWWfGcQeP7c0f3Vv422")
+              .collection("SaleProducts")
+              .getDocuments(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ProductTab(
+                              snapshot.data.documents[index].documentID)));
+                      //  print(snapshot.data.documents[index].documentID);
+                    },
+                    child: Card(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${snapshot.data.documents[index].data["title"]}",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              SizedBox(
+                                width: 219,
+                                child: Text(
+                                  "${snapshot.data.documents[index].data["description"]}",
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.blueGrey),
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                ),
+                              ),
+                              Text(
+                                "R\$${snapshot.data.documents[index].data["price"]}",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image:
+                                  snapshot.data.documents[index].data["image"],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
+        floatingActionButton: new FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddProductTab()),
+            );
+          },
+          tooltip: 'Adicionar itens',
+          child: new Icon(Icons.add),
+        ),
+      ),
     );
   }
 }
